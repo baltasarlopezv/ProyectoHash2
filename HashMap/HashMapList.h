@@ -7,7 +7,7 @@
 //Tabla hash con manejo de colisiones usando listas enlazadas
 template <class K, class T>
 class HashMapList {
-private:
+protected:
     Lista<HashEntry<K, T>> **tabla;
 
     unsigned int tamanio;
@@ -32,6 +32,10 @@ public:
     bool esVacio();
 
     void print();
+
+    unsigned int getHash(K clave);
+
+    void setHash(unsigned int (*newHashFuncP)(K clave));
 };
 
 template <class K, class T>
@@ -122,6 +126,16 @@ void HashMapList<K, T>::getList(K clave) { //Método que devuelve la lista segú
         std::cout << aux->getDato().getValor() << std::endl;
         aux = aux->getSiguiente();
     }
+}
+
+template <class K, class T>
+unsigned int HashMapList<K, T>::getHash(K clave) {
+    return hashFuncP(clave);
+}
+
+template <class K, class T>
+void HashMapList<K, T>::setHash(unsigned int (*newHashFuncP)(K clave)) {
+    hashFuncP = newHashFuncP;
 }
 
 #endif // U05_HASH_HASHMAP_HASHMAPLIST_H_

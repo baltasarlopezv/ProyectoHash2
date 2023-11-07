@@ -62,7 +62,6 @@ int main() {
     pair<int, string> deposito4;
     pair<int, string> deposito5;
     int i = 0;
-    HashMap<string, int> tablaArticulos(500, &miHashFunc);
 
     std::ifstream archivo(
             "C:\\Users\\Lenovo\\Documents\\2do ano\\Programacion III\\ProyectoProg3\\ProyectoProg3\\Inventariado Fisico.csv");
