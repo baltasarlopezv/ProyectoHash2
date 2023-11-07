@@ -11,40 +11,40 @@
  */
 template <class T>
 class Lista {
-    private:
-        Nodo<T> *inicio;
+private:
+    Nodo<T> *inicio;
 
 
-    public:
-        Lista();
+public:
+    Lista();
 
-        Lista(const Lista<T> &li);
+    Lista(const Lista<T> &li);
 
-        ~Lista();
+    ~Lista();
 
-        bool esVacia();
+    bool esVacia();
 
-        int getTamanio();
+    int getTamanio();
 
-        void insertar(int pos, T dato);
+    void insertar(int pos, T dato);
 
-        void insertarPrimero(T dato);
+    void insertarPrimero(T dato);
 
-        void insertarUltimo(T dato);
+    void insertarUltimo(T dato);
 
-        void remover(int pos);
+    void remover(int pos);
 
-        T getDato(int pos);
+    T getDato(int pos);
 
-        void reemplazar(int pos, T dato);
+    void reemplazar(int pos, T dato);
 
-        void vaciar();
+    void vaciar();
 
-        void imprimir();
+    void imprimir();
 
-        void insertAfter2(int oldValue, int n, int newValue);
+    void insertAfter2(int oldValue, int n, int newValue);
 
-        Nodo<T> *getInicio();
+    Nodo<T> *getInicio();
 };
 
 /**

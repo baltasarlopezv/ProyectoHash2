@@ -32,20 +32,21 @@ struct Producto {
               deposito4(deposito4), deposito5(deposito5) {
         totalDepositos = deposito1 + deposito2 + deposito3 + deposito4 + deposito5;
     }
+
+    friend ostream &operator<<(ostream &os, const Producto &produc) {
+        os << "-> Grupo: " << produc.grupo << endl << ". Codigo de Barra: " << produc.codigoDeBarra << endl << ". Articlo: " << produc.articulo << endl
+           << ". Deposito 1: " << produc.deposito1 << endl << ". Deposito 2: " << produc.deposito2 << endl << ". Deposito 3: " << produc.deposito3 << endl << ". Deposito 4: " << produc.deposito4 << endl << ". Deposito 5: " << produc.deposito5 << endl << ". Total depositos: " << produc.totalDepositos << endl;
+        return os;
+    }
 };
 
-// Función para crear un código único para un producto
-// Función para crear un código único para un producto
-unsigned int miHashFunc(const std::string& clave) {
+
+unsigned int miHashFunc(string clave) {
     unsigned int idx = 0;
-    const int prime = 31; // Número primo para dispersión adicional
-
-    // Suma los valores de los caracteres de la cadena
-    for (char c : clave) {
-        idx = (idx * prime + c) % 500;
+    for(int i = 0; i < 3; i++) {
+        idx += clave[i];
     }
-
-    std::cout << "Hash de la clave " << clave << ": " << idx << std::endl;
+    cout << "Hash de la clave " << clave << ": " << idx << endl;
     return idx;
 }
 
@@ -130,7 +131,8 @@ int main() {
     archivo.close();
 
     // Crear un HashMapList para almacenar los productos utilizando la función de hash personalizada
-    HashMapList<string, Producto> productos(467, &miHashFunc);
+    HashMapList<string, Producto> producto(467, &miHashFunc);
+
 
     return 0;
 }
