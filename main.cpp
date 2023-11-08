@@ -186,7 +186,7 @@ int main() {
                 cout << "Ingrese el valor mínimo de stock: ";
                 cin >> valor;
                 int cont = Cantidadtotart.contarNodosMenoresAlValor(valor);
-                cout << "Cantidad de artículos en el mínimo de stock: " << cont << endl;
+                cout << "Cantidad de articulos en el minimo de stock: " << cont << endl;
                 break;
             }
             case 4: {
@@ -215,7 +215,7 @@ int main() {
                         break;
                 }
 
-                cout << "Cantidad de articulos en el mínimo de stock para el deposito " << deposi << ": "
+                cout << "Cantidad de articulos en el minimo de stock para el deposito " << deposi << ": "
                      << contDeposito << endl;
                 break;
             }
@@ -246,7 +246,7 @@ int main() {
 
                 // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
                 int numeroDeposito;
-                cout << "Ingrese el nimero del deposito a imprimir (1-5): ";
+                cout << "Ingrese el numero del deposito a imprimir (1-5): ";
                 cin >> numeroDeposito;
 
                 // Verifica si el número de depósito ingresado es válido (de 1 a 5)
