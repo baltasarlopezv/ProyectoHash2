@@ -131,7 +131,6 @@ int main() {
 
     archivo.close();
 
-    // Crear un HashMapList para almacenar los productos utilizando la función de hash personalizada
 
     // Insertar todos los productos en el HashMapList
     for (const Producto& producto : productosvec) {
@@ -142,55 +141,43 @@ int main() {
 
     string articuloABuscar;
 
-    int opcion = 0;
-    cout << "1. El stock total del artículo ingresado como argumento." << endl;
-    cout << "2. El stock total del artículo ingresado como argumento en cada depósito." << endl;
-    cin >> opcion;
+    std::cout << "Ingrese el articulo a buscar: ";
+    getline(std::cin, articuloABuscar);
+    productoMap.getList(articuloABuscar);
 
-    if (opcion == 1){
-        std::cout << "Ingrese el articulo a buscar: ";
-        getline(std::cin, articuloABuscar);
-        productoMap.getList(articuloABuscar);
-    } else{
-        std::cout << "Ingrese el articulo a buscar: ";
-        getline(std::cin, articuloABuscar);
+    // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
+    int numeroDeposito;
+    std::cout << "Ingrese el nimero del deposito a imprimir (1-5): ";
+    cin >> numeroDeposito;
 
-        // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
-        int numeroDeposito;
-        std::cout << "Ingrese el número del deposito a imprimir (1-5): ";
-        cin >> numeroDeposito;
+    // Verifica si el número de depósito ingresado es válido (de 1 a 5)
+    if (numeroDeposito >= 1 && numeroDeposito <= 5) {
+        // Obtén el producto del HashMapList
+        Producto productoEncontrado = productoMap.get(articuloABuscar);
 
-        // Verifica si el número de depósito ingresado es válido (de 1 a 5)
-        if (numeroDeposito >= 1 && numeroDeposito <= 5) {
-            // Obtén el producto del HashMapList
-            Producto productoEncontrado = productoMap.get(articuloABuscar);
-
-            // Imprime el atributo del depósito específico
-            switch (numeroDeposito) {
-                case 1:
-                    std::cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
-                    break;
-                case 2:
-                    std::cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
-                    break;
-                case 3:
-                    std::cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
-                    break;
-                case 4:
-                    std::cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
-                    break;
-                case 5:
-                    std::cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
-                    break;
-                default:
-                    std::cout << "Nomero de deposito no volido." << endl;
-            }
-        } else {
-            std::cout << "Nomero de deposito no volido." << endl;
+        // Imprime el atributo del depósito específico
+        switch (numeroDeposito) {
+            case 1:
+                std::cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
+                break;
+            case 2:
+                std::cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
+                break;
+            case 3:
+                std::cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
+                break;
+            case 4:
+                std::cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
+                break;
+            case 5:
+                std::cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
+                break;
+            default:
+                std::cout << "Nomero de deposito no volido." << endl;
         }
+    } else {
+        std::cout << "Nomero de deposito no volido." << endl;
     }
-
-
 
     return 0;
 }
