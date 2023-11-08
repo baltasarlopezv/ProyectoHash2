@@ -8,6 +8,7 @@
 
 using namespace std;
 
+
 // Define una estructura para contener los datos de Producto
 struct Producto {
     std::string grupo;
@@ -40,16 +41,15 @@ struct Producto {
     }
 };
 
-
 unsigned int miHashFunc(string clave) {
     unsigned int idx = 0;
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < clave.size(); i++) {
         idx += clave[i];
     }
+    idx = idx % 512;
     cout << "Hash de la clave " << clave << ": " << idx << endl;
     return idx;
 }
-
 
 int main() {
     ArbolBinarioAVL<pair<int, string >> Cantidadtotart;
@@ -131,8 +131,36 @@ int main() {
     archivo.close();
 
     // Crear un HashMapList para almacenar los productos utilizando la función de hash personalizada
-    HashMapList<string, Producto> producto(467, &miHashFunc);
+    HashMapList<string, Producto> productoMap(512, &miHashFunc);
 
+    // Insertar todos los productos en el HashMapList
+    for (const Producto& producto : productosvec) {
+        // Utiliza el atributo "articulo" como clave para el HashMapList
+        productoMap.put(producto.articulo, producto);
+    }
+
+
+    string articuloABuscar;
+    std::cout << "Ingrese el articulo a buscar: ";
+    std::cin >> articuloABuscar;
+    productoMap.getList(articuloABuscar);
+
+
+/*
+    string articuloABuscar;
+    std::cout << "Ingrese el articulo a buscar: ";
+    std::cin >> articuloABuscar;
+    miHashFunc(articuloABuscar);
+
+    Producto productoEncontrado = productoMap.getList(articuloABuscar);
+
+    if (productoEncontrado.articulo != "") {
+        std::cout << "Producto encontrado:" << std::endl;
+        std::cout << productoEncontrado << std::endl;
+    } else {
+        std::cout << "El articulo no se encontri en el mapa hash." << std::endl;
+    }
+*/
 
     return 0;
 }
