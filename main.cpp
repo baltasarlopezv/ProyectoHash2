@@ -8,6 +8,7 @@
 
 using namespace std;
 
+
 // Define una estructura para contener los datos de Producto
 struct Producto {
     std::string grupo;
@@ -34,22 +35,21 @@ struct Producto {
     }
 
     friend ostream &operator<<(ostream &os, const Producto &produc) {
-        os << "-> Grupo: " << produc.grupo << endl << ". Codigo de Barra: " << produc.codigoDeBarra << endl << ". Articlo: " << produc.articulo << endl
+        os << ". Codigo de Barra: " << produc.codigoDeBarra << endl << ". Articlo: " << produc.articulo << endl
            << ". Deposito 1: " << produc.deposito1 << endl << ". Deposito 2: " << produc.deposito2 << endl << ". Deposito 3: " << produc.deposito3 << endl << ". Deposito 4: " << produc.deposito4 << endl << ". Deposito 5: " << produc.deposito5 << endl << ". Total depositos: " << produc.totalDepositos << endl;
         return os;
     }
 };
 
-
 unsigned int miHashFunc(string clave) {
     unsigned int idx = 0;
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < clave.size(); i++) {
         idx += clave[i];
     }
-    cout << "Hash de la clave " << clave << ": " << idx << endl;
+    idx = idx % 512;
+    //cout << "Hash de la clave " << clave << ": " << idx << endl;
     return idx;
 }
-
 
 int main() {
     ArbolBinarioAVL<pair<int, string >> Cantidadtotart;
@@ -64,6 +64,7 @@ int main() {
     pair<int, string> Deposito3;
     pair<int, string> Deposito4;
     pair<int, string> Deposito5;
+    HashMapList<string, Producto> productoMap(512, &miHashFunc);
 
     std::ifstream archivo("C:\\Users\\Lenovo\\Documents\\2do ano\\Programacion III\\ProyectoHash2\\Inventariado Fisico.csv");
     std::vector<Producto> productosvec;
@@ -131,7 +132,64 @@ int main() {
     archivo.close();
 
     // Crear un HashMapList para almacenar los productos utilizando la función de hash personalizada
-    HashMapList<string, Producto> producto(467, &miHashFunc);
+
+    // Insertar todos los productos en el HashMapList
+    for (const Producto& producto : productosvec) {
+        // Utiliza el atributo "articulo" como clave para el HashMapList
+        productoMap.put(producto.articulo, producto);
+    }
+
+
+    string articuloABuscar;
+
+    int opcion = 0;
+    cout << "1. El stock total del artículo ingresado como argumento." << endl;
+    cout << "2. El stock total del artículo ingresado como argumento en cada depósito." << endl;
+    cin >> opcion;
+
+    if (opcion == 1){
+        std::cout << "Ingrese el articulo a buscar: ";
+        getline(std::cin, articuloABuscar);
+        productoMap.getList(articuloABuscar);
+    } else{
+        std::cout << "Ingrese el articulo a buscar: ";
+        getline(std::cin, articuloABuscar);
+
+        // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
+        int numeroDeposito;
+        std::cout << "Ingrese el número del deposito a imprimir (1-5): ";
+        cin >> numeroDeposito;
+
+        // Verifica si el número de depósito ingresado es válido (de 1 a 5)
+        if (numeroDeposito >= 1 && numeroDeposito <= 5) {
+            // Obtén el producto del HashMapList
+            Producto productoEncontrado = productoMap.get(articuloABuscar);
+
+            // Imprime el atributo del depósito específico
+            switch (numeroDeposito) {
+                case 1:
+                    std::cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
+                    break;
+                case 2:
+                    std::cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
+                    break;
+                case 3:
+                    std::cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
+                    break;
+                case 4:
+                    std::cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
+                    break;
+                case 5:
+                    std::cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
+                    break;
+                default:
+                    std::cout << "Nomero de deposito no volido." << endl;
+            }
+        } else {
+            std::cout << "Nomero de deposito no volido." << endl;
+        }
+    }
+
 
 
     return 0;

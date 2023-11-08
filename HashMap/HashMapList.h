@@ -32,6 +32,8 @@ public:
     bool esVacio();
 
     void print();
+
+    T get(K clave);
 };
 
 template <class K, class T>
@@ -109,19 +111,46 @@ unsigned int HashMapList<K, T>::hashFunc(K clave) {
 }
 
 template <class K, class T>
-void HashMapList<K, T>::getList(K clave) { //Método que devuelve la lista según la clave que recibe
+void HashMapList<K, T>::getList(K clave) {
     unsigned int pos = hashFuncP(clave) % tamanio;
 
-    if(tabla[pos] == NULL) {
+    if (tabla[pos] == NULL) {
         throw 404;
     }
 
     Nodo<HashEntry<K, T>> *aux = tabla[pos]->getInicio();
 
     while (aux != NULL) {
-        std::cout << aux->getDato().getValor() << std::endl;
+        if (aux->getDato().getClave() == clave) {
+            std::cout << aux->getDato().getValor() << std::endl;
+            return;  // Sale del bucle cuando se encuentra el producto deseado
+        }
         aux = aux->getSiguiente();
     }
+
+    // Si llega a este punto, significa que no se encontró el producto
+    std::cout << "Producto no encontrado" << std::endl;
 }
+
+template <class K, class T>
+T HashMapList<K, T>::get(K clave) {
+    unsigned int pos = hashFuncP(clave) % tamanio;
+
+    if (tabla[pos] == NULL) {
+        throw std::runtime_error("La clave no existe en el mapa.");
+    }
+
+    Nodo<HashEntry<K, T>> *aux = tabla[pos]->getInicio();
+
+    while (aux != NULL) {
+        if (aux->getDato().getClave() == clave) {
+            return aux->getDato().getValor();
+        }
+        aux = aux->getSiguiente();
+    }
+
+    throw std::runtime_error("La clave no existe en el mapa.");
+}
+
 
 #endif // U05_HASH_HASHMAP_HASHMAPLIST_H_
