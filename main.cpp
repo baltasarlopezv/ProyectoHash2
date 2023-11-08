@@ -65,10 +65,10 @@ int main(int argc, char** argv) {
         filename += argv[i];
         filename += " ";
     }
-    while (filename.back() == ' ') {
+    while(filename.back() == ' ') {
         filename.pop_back();
     }
-    filename.find('[');
+    filename.find ('[');
     int cantcor = 0, num = 0, dep = 0;
 
     for (int i = 0; i < s.size(); i++) {
@@ -117,18 +117,18 @@ int main(int argc, char** argv) {
     ArbolBinarioAVL<pair<int, string >> ardeposito4;
     ArbolBinarioAVL<pair<int, string >> ardeposito5;
     pair<int, string> total_articulo;
-    pair<int, string> deposito1;
-    pair<int, string> deposito2;
-    pair<int, string> deposito3;
-    pair<int, string> deposito4;
-    pair<int, string> deposito5;
-    HashMapList<string, Producto> productoMap(512, &miHashFunc);
-    int i = 0;
+    pair<int, string> Deposito1;
+    pair<int, string> Deposito2;
+    pair<int, string> Deposito3;
+    pair<int, string> Deposito4;
+    pair<int, string> Deposito5;
+    HashMapList <string, Producto> productoMap(512, &miHashFunc);
+
 
     std::ifstream archivo("../" + filename);
     std::vector<Producto> productosvec;
 
-
+    int i = 0;
     if (archivo.is_open()) {
         std::string linea;
         while (std::getline(archivo, linea)) {
@@ -163,12 +163,33 @@ int main(int argc, char** argv) {
             // Agrega el objeto a la lista de productos
             productosvec.push_back(nuevoProducto);
 
+            total_articulo.first= productosvec[i].totalDepositos;
+            total_articulo.second= productosvec[i].articulo;
+            Deposito1.first= productosvec[i].deposito1;
+            Deposito1.second= productosvec[i].articulo;
+            Deposito2.first= productosvec[i].deposito2;
+            Deposito2.second= productosvec[i].articulo;
+            Deposito3.first= productosvec[i].deposito3;
+            Deposito3.second= productosvec[i].articulo;
+            Deposito4.first= productosvec[i].deposito4;
+            Deposito4.second= productosvec[i].articulo;
+            Deposito5.first= productosvec[i].deposito5;
+            Deposito5.second= productosvec[i].articulo;
+
+            Cantidadtotart.put(total_articulo);
+            ardeposito1.put(Deposito1);
+            ardeposito2.put(Deposito2);
+            ardeposito3.put(Deposito3);
+            ardeposito4.put(Deposito4);
+            ardeposito5.put(Deposito5);
+            i++;
 
             productoMap.put(nuevoProducto.articulo, nuevoProducto);
 
         }
     }
     archivo.close();
+
 
     int opcion;
     do {
@@ -189,181 +210,122 @@ int main(int argc, char** argv) {
                 cout << "Cantidad total de articulos diferentes: " << Cantidadtotart.contarNodos() << endl;
                 break;
 
-                for (const auto &product: productosvec) {
-                    // Crea un total_articulo (totalDepositos, articulo) y lo agrega al árbol
-                    total_articulo.first = product.totalDepositos;
-                    total_articulo.second = product.articulo;
-                    deposito1.first = product.deposito1;
-                    deposito1.second = product.articulo;
-                    deposito2.first = product.deposito2;
-                    deposito2.second = product.articulo;
-                    deposito3.first = product.deposito3;
-                    deposito3.second = product.articulo;
-                    deposito4.first = product.deposito4;
-                    deposito4.second = product.articulo;
-                    deposito5.first = product.deposito5;
-                    deposito5.second = product.articulo;
+            case 2: {
+                int suma = Cantidadtotart.sumarNodos();
+                cout << "Suma de todos los articulos: " << suma << endl;
+                break;
+            }
+            case 3: {
+                int valor;
+                cout << "Ingrese el valor mínimo de stock: ";
+                cin >> valor;
+                int cont = Cantidadtotart.contarNodosMenoresAlValor(valor);
+                cout << "Cantidad de articulos en el minimo de stock: " << cont << endl;
+                break;
+            }
+            case 4: {
+                int deposi, min;
+                cout << "Ingrese el deposito: ";
+                cin >> deposi;
+                cout << "Ingrese el valor minimo: ";
+                cin >> min;
+                int contDeposito = 0;
 
-
-                    Cantidadtotart.put(total_articulo);
-                    ardeposito1.put(deposito1);
-                    ardeposito2.put(deposito2);
-                    ardeposito3.put(deposito3);
-                    ardeposito4.put(deposito4);
-                    ardeposito5.put(deposito5);
-
-
+                switch (deposi) {
+                    case 1:
+                        contDeposito = ardeposito1.contarNodosMenoresAlValor(min);
+                        break;
+                    case 2:
+                        contDeposito = ardeposito2.contarNodosMenoresAlValor(min);
+                        break;
+                    case 3:
+                        contDeposito = ardeposito3.contarNodosMenoresAlValor(min);
+                        break;
+                    case 4:
+                        contDeposito = ardeposito4.contarNodosMenoresAlValor(min);
+                        break;
+                    case 5:
+                        contDeposito = ardeposito5.contarNodosMenoresAlValor(min);
+                        break;
                 }
 
-                // Insertar todos los productos en el HashMapList
-                for (const Producto &producto: productosvec) {
-                    // Utiliza el atributo "articulo" como clave para el HashMapList
-                    productoMap.put(producto.articulo, producto);
-                }
+                cout << "Cantidad de articulos en el minimo de stock para el deposito " << deposi << ": "
+                     << contDeposito << endl;
+                break;
+            }
 
-                /*
-                cout << Cantidadtotart.contarNodos() << endl;
-                cout<<Cantidadtotart.sumarNodos()<<endl;
-                cout<<Cantidadtotart.contarNodosMenoresAlValor(1)<<endl;
-                cout<<ardeposito4.contarNodosMenoresAlValor(1)<<endl;
-                cout<<Cantidadtotart.contarNodosMayoresAlValor(84)<<endl;
-            */
-                int opcion;
-                do {
-                    cout << "\nMENU:" << endl;
-                    cout << "1. Cantidad total de articulos diferentes." << endl;
-                    cout << "2. Cantidad total de articulos." << endl;
-                    cout << "3. Listado de articulos que estan en el minimo de stock." << endl;
-                    cout << "4. Listado de articulos que estan en el minimo de stock y por deposito." << endl;
-                    cout << "5. Listado de articulos que igualan o superan determinada cantidad en stock." << endl;
-                    cout << "6. Stock individual de cada articulo." << endl;
-                    cout << "7. Stock individual de cada articulo por numero de deposito." << endl;
-                    cout << "8. Salir." << endl;
-                    cout << "Seleccione una opcion: ";
-                    cin >> opcion;
+            case 5: {
+                int cantidadMinima;
+                cout << "Ingrese la cantidad de stock: ";
+                cin >> cantidadMinima;
+                int conmayores = Cantidadtotart.contarNodosMayoresAlValor(cantidadMinima);
+                cout << "Cantidad de articulos que igualan o superan la cantidad ingresada: " << conmayores << endl;
+                break;
+            }
 
-                    switch (opcion) {
+            case 6: {
+                string articuloABuscar;
+                cin.ignore(); // Limpia el búfer antes de getline
+                cout << "Ingrese el articulo a buscar: ";
+                getline(cin, articuloABuscar);
+                productoMap.getList(articuloABuscar);
+                break;
+            }
+
+            case 7: {
+                string articuloABuscar;
+                cin.ignore(); // Limpia el búfer antes de getline
+                cout << "Ingrese el articulo a buscar: ";
+                getline(cin, articuloABuscar);
+
+                // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
+                int numeroDeposito;
+                cout << "Ingrese el numero del deposito a imprimir (1-5): ";
+                cin >> numeroDeposito;
+
+                // Verifica si el número de depósito ingresado es válido (de 1 a 5)
+                if (numeroDeposito >= 1 && numeroDeposito <= 5) {
+                    // Obtén el producto del HashMapList
+                    Producto productoEncontrado = productoMap.get(articuloABuscar);
+
+                    // Imprime el atributo del depósito específico
+                    switch (numeroDeposito) {
                         case 1:
-                            cout << "Cantidad total de articulos diferentes: " << Cantidadtotart.contarNodos() << endl;
+                            cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
                             break;
-
-                        case 2: {
-                            int suma = Cantidadtotart.sumarNodos();
-                            cout << "Suma de todos los articulos: " << suma << endl;
+                        case 2:
+                            cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
                             break;
-                        }
-                        case 3: {
-                            int valor;
-                            cout << "Ingrese el valor mínimo de stock: ";
-                            cin >> valor;
-                            int cont = Cantidadtotart.contarNodosMenoresAlValor(valor);
-                            cout << "Cantidad de articulos en el minimo de stock: " << cont << endl;
+                        case 3:
+                            cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
                             break;
-                        }
-                        case 4: {
-                            int deposi, min;
-                            cout << "Ingrese el deposito: ";
-                            cin >> deposi;
-                            cout << "Ingrese el valor minimo: ";
-                            cin >> min;
-                            int contDeposito = 0;
-
-                            switch (deposi) {
-                                case 1:
-                                    contDeposito = ardeposito1.contarNodosMenoresAlValor(min);
-                                    break;
-                                case 2:
-                                    contDeposito = ardeposito2.contarNodosMenoresAlValor(min);
-                                    break;
-                                case 3:
-                                    contDeposito = ardeposito3.contarNodosMenoresAlValor(min);
-                                    break;
-                                case 4:
-                                    contDeposito = ardeposito4.contarNodosMenoresAlValor(min);
-                                    break;
-                                case 5:
-                                    contDeposito = ardeposito5.contarNodosMenoresAlValor(min);
-                                    break;
-                            }
-
-                            cout << "Cantidad de articulos en el minimo de stock para el deposito " << deposi << ": "
-                                 << contDeposito << endl;
+                        case 4:
+                            cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
                             break;
-                        }
-
-                        case 5: {
-                            int cantidadMinima;
-                            cout << "Ingrese la cantidad de stock: ";
-                            cin >> cantidadMinima;
-                            int conmayores = Cantidadtotart.contarNodosMayoresAlValor(cantidadMinima);
-                            cout << "Cantidad de articulos que igualan o superan la cantidad ingresada: " << conmayores
-                                 << endl;
+                        case 5:
+                            cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
                             break;
-                        }
-
-                        case 6: {
-                            string articuloABuscar;
-                            cin.ignore(); // Limpia el búfer antes de getline
-                            cout << "Ingrese el articulo a buscar: ";
-                            getline(cin, articuloABuscar);
-                            productoMap.getList(articuloABuscar);
-                            break;
-                        }
-
-                        case 7: {
-                            string articuloABuscar;
-                            cin.ignore(); // Limpia el búfer antes de getline
-                            cout << "Ingrese el articulo a buscar: ";
-                            getline(cin, articuloABuscar);
-
-                            // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
-                            int numeroDeposito;
-                            cout << "Ingrese el numero del deposito a imprimir (1-5): ";
-                            cin >> numeroDeposito;
-
-                            // Verifica si el número de depósito ingresado es válido (de 1 a 5)
-                            if (numeroDeposito >= 1 && numeroDeposito <= 5) {
-                                // Obtén el producto del HashMapList
-                                Producto productoEncontrado = productoMap.get(articuloABuscar);
-
-                                // Imprime el atributo del depósito específico
-                                switch (numeroDeposito) {
-                                    case 1:
-                                        cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
-                                        break;
-                                    case 2:
-                                        cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
-                                        break;
-                                    case 3:
-                                        cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
-                                        break;
-                                    case 4:
-                                        cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
-                                        break;
-                                    case 5:
-                                        cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
-                                        break;
-                                    default:
-                                        cout << "Numero de deposito no valido." << endl;
-                                }
-                            } else {
-                                cout << "Numero de deposito no valido." << endl;
-                            }
-                            break;
-                        }
-
-                        case 8: {
-                            cout << "Saliendo del programa. Hasta luego!" << endl;
-                            break;
-                        }
-
                         default:
-                            cout << "Opcion invalida. Intente nuevamente." << endl;
+                            cout << "Numero de deposito no valido." << endl;
                     }
-                } while (opcion != 8);
+                } else {
+                    cout << "Numero de deposito no valido." << endl;
+                }
+                break;
+            }
 
-                return 0;
+            case 8: {
+                cout << "Saliendo del programa. Hasta luego!" << endl;
+                break;
+            }
+
+            default:
+                cout << "Opcion invalida. Intente nuevamente." << endl;
         }
+    }while (opcion != 8);
+
+    return 0;
+}
 
 /*
         if (opcion == 1) {
@@ -455,7 +417,3 @@ int main(int argc, char** argv) {
             cout << "Opcion invalida. Intente nuevamente." << endl;
         }
 */
-    } while (opcion != 8);
-
-    return 0;
-}
