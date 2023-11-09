@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     HashMapList <string, Producto> productoMap(512, &miHashFunc);
 
 
-    std::ifstream archivo("../Inventariado Fisico.csv");
+    std::ifstream archivo("C:\\Users\\geronimo\\OneDrive\\Escritorio\\PROGRAMACION_III\\parcial-2-a-o-2023-Geronimo2001\\Inventariado Fisico.csv");
     std::vector<Producto> productosvec;
 
     int i = 0;
