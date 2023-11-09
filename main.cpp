@@ -3,8 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
-#include <iomanip>
 #include "Arbol/ArbolBinarioAVL.h"
 #include "HashMap/HashMapList.h"
 
@@ -31,7 +31,7 @@ struct Producto {
     // Constructor para inicializar los atributos del objeto Producto y calcular la suma de los depósitos
     Producto(string grupo, string codigoDeBarra, string articulo,
              int deposito1, int deposito2, int deposito3, int deposito4, int deposito5)
-            : grupo(grupo), codigoDeBarra(codigoDeBarra), articulo(articulo),
+            : grupo(std::move(grupo)), codigoDeBarra(std::move(codigoDeBarra)), articulo(std::move(articulo)),
               deposito1(deposito1), deposito2(deposito2), deposito3(deposito3),
               deposito4(deposito4), deposito5(deposito5) {
         totalDepositos = deposito1 + deposito2 + deposito3 + deposito4 + deposito5;
@@ -46,8 +46,8 @@ struct Producto {
 
 unsigned int miHashFunc(string clave) {
     unsigned int idx = 0;
-    for(int i = 0; i < clave.size(); i++) {
-        idx += clave[i];
+    for(char i : clave) {
+        idx += i;
     }
     idx = idx % 512;
     //cout << "Hash de la clave " << clave << ": " << idx << endl;
@@ -55,7 +55,9 @@ unsigned int miHashFunc(string clave) {
 }
 
 int main(int argc, char** argv) {
-    string s, nombre;
+    clock_t begin;
+
+    string  nombre;
     cout << "cantidad de argumentos: " << argc << endl;
     for (int i = 0; i < argc; i++) {
         cout << "argumento " << i << ": " << argv[i] << endl;
@@ -68,11 +70,15 @@ int main(int argc, char** argv) {
     while(filename.back() == ' ') {
         filename.pop_back();
     }
-    filename.find ('[');
+    filename.shrink_to_fit();
+
     int cantcor = 0, num = 0, dep = 0;
 
-    for (int i = 0; i < s.size(); i++) {
-        if (s[i] == '[') {
+    string s = argv[1];
+    s.shrink_to_fit();
+
+    for (char i : s) {
+        if (i == '[') {
             cantcor++;
         }
     }
@@ -106,9 +112,7 @@ int main(int argc, char** argv) {
             s.erase(s.find('['), s.find(']') - s.find('[') + 2);
         }
     }
-
     s.shrink_to_fit();
-
 
     ArbolBinarioAVL<pair<int, string >> Cantidadtotart;
     ArbolBinarioAVL<pair<int, string >> ardeposito1;
@@ -125,7 +129,7 @@ int main(int argc, char** argv) {
     HashMapList <string, Producto> productoMap(512, &miHashFunc);
 
 
-    std::ifstream archivo("../" + filename);
+    std::ifstream archivo("../Inventariado Fisico.csv");
     std::vector<Producto> productosvec;
 
     int i = 0;
@@ -190,230 +194,84 @@ int main(int argc, char** argv) {
     }
     archivo.close();
 
+    //funciones
+    begin = clock();
 
-    int opcion;
-    do {
-        cout << "\nMENU:" << endl;
-        cout << "1. Cantidad total de articulos diferentes." << endl;
-        cout << "2. Cantidad total de articulos." << endl;
-        cout << "3. Listado de articulos que estan en el minimo de stock." << endl;
-        cout << "4. Listado de articulos que estan en el minimo de stock y por deposito." << endl;
-        cout << "5. Listado de articulos que igualan o superan determinada cantidad en stock." << endl;
-        cout << "6. Stock individual de cada articulo." << endl;
-        cout << "7. Stock individual de cada articulo por numero de deposito." << endl;
-        cout << "8. Salir." << endl;
-        cout << "Seleccione una opcion: ";
-        cin >> opcion;
+    if (s == "total_art_dif"){
+        cout << "Cantidad total de articulos diferentes: " << Cantidadtotart.contarNodos() << endl;
+    }
+    if (s == "total_art") {
+        int suma = Cantidadtotart.sumarNodos();
+        cout << "Suma de todos los articulos: " << suma << endl;
+    }
+    if (s == "min_stock" && cantcor == 1) {
+        cout << "Cantidad de articulos en el minimo de stock: " << Cantidadtotart.contarNodosMenoresAlValor(num) << endl;
+    } else if (s == "min_stock" && cantcor == 2) {
+        int contDeposito = 0;
 
-        switch (opcion) {
+        switch (dep) {
             case 1:
-                cout << "Cantidad total de articulos diferentes: " << Cantidadtotart.contarNodos() << endl;
+                contDeposito = ardeposito1.contarNodosMenoresAlValor(num);
                 break;
-
-            case 2: {
-                int suma = Cantidadtotart.sumarNodos();
-                cout << "Suma de todos los articulos: " << suma << endl;
+            case 2:
+                contDeposito = ardeposito2.contarNodosMenoresAlValor(num);
                 break;
-            }
-            case 3: {
-                int valor;
-                cout << "Ingrese el valor mínimo de stock: ";
-                cin >> valor;
-                int cont = Cantidadtotart.contarNodosMenoresAlValor(valor);
-                cout << "Cantidad de articulos en el minimo de stock: " << cont << endl;
+            case 3:
+                contDeposito = ardeposito3.contarNodosMenoresAlValor(num);
                 break;
-            }
-            case 4: {
-                int deposi, min;
-                cout << "Ingrese el deposito: ";
-                cin >> deposi;
-                cout << "Ingrese el valor minimo: ";
-                cin >> min;
-                int contDeposito = 0;
-
-                switch (deposi) {
-                    case 1:
-                        contDeposito = ardeposito1.contarNodosMenoresAlValor(min);
-                        break;
-                    case 2:
-                        contDeposito = ardeposito2.contarNodosMenoresAlValor(min);
-                        break;
-                    case 3:
-                        contDeposito = ardeposito3.contarNodosMenoresAlValor(min);
-                        break;
-                    case 4:
-                        contDeposito = ardeposito4.contarNodosMenoresAlValor(min);
-                        break;
-                    case 5:
-                        contDeposito = ardeposito5.contarNodosMenoresAlValor(min);
-                        break;
-                }
-
-                cout << "Cantidad de articulos en el minimo de stock para el deposito " << deposi << ": "
-                     << contDeposito << endl;
+            case 4:
+                contDeposito = ardeposito4.contarNodosMenoresAlValor(num);
                 break;
-            }
-
-            case 5: {
-                int cantidadMinima;
-                cout << "Ingrese la cantidad de stock: ";
-                cin >> cantidadMinima;
-                int conmayores = Cantidadtotart.contarNodosMayoresAlValor(cantidadMinima);
-                cout << "Cantidad de articulos que igualan o superan la cantidad ingresada: " << conmayores << endl;
+            case 5:
+                contDeposito = ardeposito5.contarNodosMenoresAlValor(num);
                 break;
-            }
-
-            case 6: {
-                string articuloABuscar;
-                cin.ignore(); // Limpia el búfer antes de getline
-                cout << "Ingrese el articulo a buscar: ";
-                getline(cin, articuloABuscar);
-                productoMap.getList(articuloABuscar);
-                break;
-            }
-
-            case 7: {
-                string articuloABuscar;
-                cin.ignore(); // Limpia el búfer antes de getline
-                cout << "Ingrese el articulo a buscar: ";
-                getline(cin, articuloABuscar);
-
-                // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
-                int numeroDeposito;
-                cout << "Ingrese el numero del deposito a imprimir (1-5): ";
-                cin >> numeroDeposito;
-
-                // Verifica si el número de depósito ingresado es válido (de 1 a 5)
-                if (numeroDeposito >= 1 && numeroDeposito <= 5) {
-                    // Obtén el producto del HashMapList
-                    Producto productoEncontrado = productoMap.get(articuloABuscar);
-
-                    // Imprime el atributo del depósito específico
-                    switch (numeroDeposito) {
-                        case 1:
-                            cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
-                            break;
-                        case 2:
-                            cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
-                            break;
-                        case 3:
-                            cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
-                            break;
-                        case 4:
-                            cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
-                            break;
-                        case 5:
-                            cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
-                            break;
-                        default:
-                            cout << "Numero de deposito no valido." << endl;
-                    }
-                } else {
-                    cout << "Numero de deposito no valido." << endl;
-                }
-                break;
-            }
-
-            case 8: {
-                cout << "Saliendo del programa. Hasta luego!" << endl;
-                break;
-            }
-
-            default:
-                cout << "Opcion invalida. Intente nuevamente." << endl;
         }
-    }while (opcion != 8);
+
+        cout << "Cantidad de articulos en el minimo de stock para el deposito " << dep << ": "
+             << contDeposito << endl;
+    }
+
+
+    if (s == "stock" && cantcor == 1) {
+        productoMap.getList(nombre);
+    }else if (s == "stock" && cantcor == 2) {
+        // Verifica si el número de depósito ingresado es válido (de 1 a 5)
+        if (dep >= 1 && dep <= 5) {
+            // Obtén el producto del HashMapList
+            Producto productoEncontrado = productoMap.get(nombre);
+
+            // Imprime el atributo del depósito específico
+            switch (dep) {
+                case 1:
+                    cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
+                    break;
+                case 2:
+                    cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
+                    break;
+                case 3:
+                    cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
+                    break;
+                case 4:
+                    cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
+                    break;
+                case 5:
+                    cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
+                    break;
+                default:
+                    cout << "Numero de deposito no valido." << endl;
+            }
+        } else {
+            cout << "Numero de deposito no valido." << endl;
+        }
+    }
+    if (s == "max_stock") {
+        cout << "Cantidad de articulos que igualan o superan la cantidad ingresada: " << Cantidadtotart.contarNodosMayoresAlValor(num) << endl;
+    }
+    clock_t end = clock();
+
+    double elapsed_secs = static_cast<double>(end - begin) / CLOCKS_PER_SEC;
+
+    std::cout << "Tardo " << elapsed_secs << " segundos\n" << std::endl;
 
     return 0;
 }
-
-/*
-        if (opcion == 1) {
-            cout << "Cantidad total de articulos diferentes: " << Cantidadtotart.contarNodos() << endl;
-        } else if (opcion == 2) {
-            int suma = Cantidadtotart.sumarNodos();
-            cout << "Suma de todos los articulos: " << suma << endl;
-        } else if (opcion == 3) {
-            int valor;
-            cout << "Ingrese el valor minimo de stock: ";
-            cin >> valor;
-            int cont = Cantidadtotart.contarNodosMenoresAlValor(valor);
-            cout << "Cantidad de articulos en el minimo de stock: " << cont << endl;
-        } else if (opcion == 4) {
-            int deposi, min;
-            cout << "Ingrese el deposito: ";
-            cin >> deposi;
-            cout << "Ingrese el valor minimo: ";
-            cin >> min;
-            int contDeposito = 0;
-
-            if (deposi == 1) {
-                contDeposito = ardeposito1.contarNodosMenoresAlValor(min);
-            } else if (deposi == 2) {
-                contDeposito = ardeposito2.contarNodosMenoresAlValor(min);
-            } else if (deposi == 3) {
-                contDeposito = ardeposito3.contarNodosMenoresAlValor(min);
-            } else if (deposi == 4) {
-                contDeposito = ardeposito4.contarNodosMenoresAlValor(min);
-            } else if (deposi == 5) {
-                contDeposito = ardeposito5.contarNodosMenoresAlValor(min);
-            }
-
-            cout << "Cantidad de articulos en el mínimo de stock para el deposito " << deposi << ": " << contDeposito << endl;
-        } else if (opcion == 5) {
-            int cantidadMinima;
-            cout << "Ingrese la cantidad de stock: ";
-            cin >> cantidadMinima;
-            int conmayores = Cantidadtotart.contarNodosMayoresAlValor(cantidadMinima);
-            cout << "Cantidad de articulos que igualan o superan la cantidad ingresada: " << conmayores << endl;
-        } else if (opcion == 6) {
-                string articuloABuscar;
-                cin.ignore(); // Limpia el búfer antes de getline
-                cout << "Ingrese el articulo a buscar: ";
-                getline(cin, articuloABuscar);
-                productoMap.getList(articuloABuscar);
-        }else if (opcion == 7) {
-                string articuloABuscar;
-                cin.ignore(); // Limpia el búfer antes de getline
-                cout << "Ingrese el articulo a buscar: ";
-                getline(cin, articuloABuscar);
-
-                // Aquí, puedes solicitar al usuario que ingrese el número de depósito a imprimir
-                int numeroDeposito;
-                cout << "Ingrese el nimero del deposito a imprimir (1-5): ";
-                cin >> numeroDeposito;
-
-                // Verifica si el número de depósito ingresado es válido (de 1 a 5)
-                if (numeroDeposito >= 1 && numeroDeposito <= 5) {
-                    // Obtén el producto del HashMapList
-                    Producto productoEncontrado = productoMap.get(articuloABuscar);
-
-                    // Imprime el atributo del depósito específico
-                    switch (numeroDeposito) {
-                        case 1:
-                            cout << "Deposito 1: " << productoEncontrado.deposito1 << endl;
-                            break;
-                        case 2:
-                            cout << "Deposito 2: " << productoEncontrado.deposito2 << endl;
-                            break;
-                        case 3:
-                            cout << "Deposito 3: " << productoEncontrado.deposito3 << endl;
-                            break;
-                        case 4:
-                            cout << "Deposito 4: " << productoEncontrado.deposito4 << endl;
-                            break;
-                        case 5:
-                            cout << "Deposito 5: " << productoEncontrado.deposito5 << endl;
-                            break;
-                        default:
-                            cout << "Numero de deposito no valido." << endl;
-                    }
-                } else {
-                    cout << "Numero de deposito no valido." << endl;
-                }
-        } else if (opcion == 8) {
-            cout << "Saliendo del programa. ¡Hasta luego!" << endl;
-        } else {
-            cout << "Opcion invalida. Intente nuevamente." << endl;
-        }
-*/
